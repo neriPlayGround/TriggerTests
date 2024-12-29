@@ -1,0 +1,40 @@
+name: Regex Check Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  #name of the job
+  regex-check:
+    #what system the job will run on
+    runs-on: ubuntu-latest
+    #steps the job will do
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        #Fetches the repository with prebuild action
+        uses: actions/checkout@v3
+
+      # Step 2: Set up a Python environment
+      - name: Set up Python
+        # prebuild with an existing action python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Step 3: Run the regex validation script
+      - name: Run Regex Check
+        run: |
+          python -c "
+          import re
+          with open('secret.txt', 'r') as f:
+              content = f.read()
+              pattern = r'Neri'
+              if not re.search(pattern, content):
+                  raise Exception('Regex validation failed: Pattern not found.')
+          "
